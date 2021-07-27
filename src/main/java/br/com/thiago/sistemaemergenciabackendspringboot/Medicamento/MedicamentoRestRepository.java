@@ -1,6 +1,5 @@
 package br.com.thiago.sistemaemergenciabackendspringboot.Medicamento;
 
-import br.com.thiago.sistemaemergenciabackendspringboot.Paciente.Paciente;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -20,14 +19,13 @@ import java.util.stream.Collectors;
 @Component
 public class MedicamentoRestRepository {
 
-    private String caminho = "src/main/resources/dados/medicamento.csv";
-
     private Path path;
 
     @PostConstruct
     public void init() {
         try {
-            path = Paths.get(String.valueOf(caminho));
+            String caminho = "src/main/resources/dados/medicamento.csv";
+            path = Paths.get(caminho);
             if (!path.toFile().exists()) {
                 Files.createFile(path);
             }
@@ -37,12 +35,12 @@ public class MedicamentoRestRepository {
     }
 
     public Medicamento inserirArquivo(Medicamento medicamento) throws IOException {
-        write(format(medicamento), StandardOpenOption.APPEND);
+        write(format(medicamento));
         return medicamento;
     }
 
-    private void write(String pacienteStr, StandardOpenOption option) throws IOException {
-        try (BufferedWriter bf = Files.newBufferedWriter(path, option)) {
+    private void write(String pacienteStr) throws IOException {
+        try (BufferedWriter bf = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
             bf.flush();
             bf.write(pacienteStr);
         }

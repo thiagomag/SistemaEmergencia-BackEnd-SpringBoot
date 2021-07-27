@@ -27,6 +27,11 @@ public class EmergenciaRestService {
         Optional<Paciente> paciente = pacienteList.stream().filter(pacienteSearch -> pacienteSearch.getId().equals(idPaciente)).findFirst();
         Optional<Medicamento> medicamento = medicamentoList.stream().filter(medicamentoSearch -> medicamentoSearch.getId().equals(idPrincipioAtivo)).findFirst();
         Emergencia atendimento = new Emergencia();
+        montarPosologia(horarioDosagem, paciente, medicamento, atendimento);
+        return emergenciaRestRepository.inserirArquivo(atendimento);
+    }
+
+    private void montarPosologia(LocalDateTime horarioDosagem, Optional<Paciente> paciente, Optional<Medicamento> medicamento, Emergencia atendimento) {
         if(medicamento.isPresent() && paciente.isPresent()) {
             atendimento.setPaciente(paciente.get());
             medicamento.get().setHorarioDosagem(horarioDosagem);
@@ -34,7 +39,6 @@ public class EmergenciaRestService {
             medicamentosAtendimento.add(medicamento.get());
             atendimento.setMedicamentos(medicamentosAtendimento);
         }
-        return emergenciaRestRepository.inserirArquivo(atendimento);
     }
 
     public List<Emergencia> listarTodos() throws IOException {

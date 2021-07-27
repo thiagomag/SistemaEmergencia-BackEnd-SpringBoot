@@ -19,14 +19,13 @@ import java.util.stream.Collectors;
 @Component
 public class PacienteRestRepository {
 
-    private String caminho = "src/main/resources/dados/paciente.csv";
-
     private Path path;
 
     @PostConstruct
     public void init() {
         try {
-            path = Paths.get(String.valueOf(caminho));
+            String caminho = "src/main/resources/dados/paciente.csv";
+            path = Paths.get(caminho);
             if (!path.toFile().exists()) {
                 Files.createFile(path);
             }
@@ -36,17 +35,16 @@ public class PacienteRestRepository {
     }
 
     public Paciente inserirArquivo(Paciente paciente) throws IOException {
-        write(format(paciente), StandardOpenOption.APPEND);
+        write(format(paciente));
         return paciente;
     }
 
-    private void write(String pacienteStr, StandardOpenOption option) throws IOException {
-        try (BufferedWriter bf = Files.newBufferedWriter(path, option)) {
+    private void write(String pacienteStr) throws IOException {
+        try (BufferedWriter bf = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
             bf.flush();
             bf.write(pacienteStr);
         }
     }
-
 
     public List<Paciente> listAll() throws IOException {
         try (BufferedReader br = Files.newBufferedReader(path)) {

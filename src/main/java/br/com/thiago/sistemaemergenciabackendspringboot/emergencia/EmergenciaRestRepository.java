@@ -60,26 +60,34 @@ public class EmergenciaRestRepository {
 
     private Emergencia convert(String linha) {
         StringTokenizer token = new StringTokenizer(linha, ",");
-        var emergencia = Emergencia.builder()
+        Emergencia emergencia = getEmergencia(token);
+        List<Medicamento> medicamentoList = new ArrayList<>();
+        while(token.hasMoreTokens()) {
+            Medicamento medicamento = getMedicamento(token);
+            medicamentoList.add(dateAndHourFormat(medicamento));
+        }
+        emergencia.setMedicamentos(medicamentoList);
+        return emergencia;
+    }
+
+    private Medicamento getMedicamento(StringTokenizer token) {
+        return Medicamento.builder()
+                .id(token.nextToken())
+                .principioAtivo(token.nextToken())
+                .fabricante(token.nextToken())
+                .dosagem(Integer.parseInt(token.nextToken()))
+                .horarioDosagem(LocalDateTime.parse(token.nextToken()))
+                .build();
+    }
+
+    private Emergencia getEmergencia(StringTokenizer token) {
+        return Emergencia.builder()
                 .paciente(Paciente.builder()
                         .id(token.nextToken())
                         .nome(token.nextToken())
                         .cpf(token.nextToken())
                         .build())
                 .build();
-        List<Medicamento> medicamentoList = new ArrayList<>();
-        while(token.hasMoreTokens()) {
-            var medicamento = Medicamento.builder()
-                    .id(token.nextToken())
-                    .principioAtivo(token.nextToken())
-                    .fabricante(token.nextToken())
-                    .dosagem(Integer.parseInt(token.nextToken()))
-                    .horarioDosagem(LocalDateTime.parse(token.nextToken()))
-                    .build();
-            medicamentoList.add(dateAndHourFormat(medicamento));
-        }
-        emergencia.setMedicamentos(medicamentoList);
-        return emergencia;
     }
 
     private Medicamento dateAndHourFormat(Medicamento medicamento) {
