@@ -2,14 +2,12 @@ package br.com.thiago.sistemaemergenciabackendspringboot.emergencia;
 
 import br.com.thiago.sistemaemergenciabackendspringboot.Medicamento.Medicamento;
 import br.com.thiago.sistemaemergenciabackendspringboot.Medicamento.MedicamentoRestRepository;
-import br.com.thiago.sistemaemergenciabackendspringboot.Paciente.Paciente;
+import br.com.thiago.sistemaemergenciabackendspringboot.Paciente.IdPacienteNaoExisteException;
 import br.com.thiago.sistemaemergenciabackendspringboot.Paciente.PacienteRestRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,31 +19,22 @@ public class EmergenciaRestService {
     private final MedicamentoRestRepository medicamentoRestRepository;
     private final PacienteRestRepository pacienteRestRepository;
 
-    public Emergencia registrarPosologia(String idPaciente, String idPrincipioAtivo, LocalDateTime horarioDosagem) throws IOException {
-        List<Paciente> pacienteList = pacienteRestRepository.listAll();
-        List<Medicamento> medicamentoList = medicamentoRestRepository.listAll();
-        Optional<Paciente> paciente = pacienteList.stream().filter(pacienteSearch -> pacienteSearch.getId().equals(idPaciente)).findFirst();
-        Optional<Medicamento> medicamento = medicamentoList.stream().filter(medicamentoSearch -> medicamentoSearch.getId().equals(idPrincipioAtivo)).findFirst();
-        Emergencia atendimento = new Emergencia();
-        montarPosologia(horarioDosagem, paciente, medicamento, atendimento);
-        return emergenciaRestRepository.inserirArquivo(atendimento);
+    public EmergenciaDTOResponse registrarPosologia(EmergenciaDTORequest emergenciaDTORequest) {
+        var paciente = pacienteRestRepository.findById(emergenciaDTORequest.getIdPaciente()).orElseThrow(() ->
+                new IdPacienteNaoExisteException(emergenciaDTORequest.getIdPaciente()));
+        var medicamentos = medicamentoRestRepository.findAllById(emergenciaDTORequest.getIdMedicamentos());
+        for(Medicamento medicameto : medicamentos)
+            medicameto.setHorarioDosagem(LocalDateTime.now());
+        var emergencia = emergenciaDTORequest.convert(medicamentos, paciente);
+        medicamentoRestRepository.saveAll(medicamentos);
+        return new EmergenciaDTOResponse(emergenciaRestRepository.save(emergencia));
     }
 
-    private void montarPosologia(LocalDateTime horarioDosagem, Optional<Paciente> paciente, Optional<Medicamento> medicamento, Emergencia atendimento) {
-        if(medicamento.isPresent() && paciente.isPresent()) {
-            atendimento.setPaciente(paciente.get());
-            medicamento.get().setHorarioDosagem(horarioDosagem);
-            List<Medicamento> medicamentosAtendimento = new ArrayList<>();
-            medicamentosAtendimento.add(medicamento.get());
-            atendimento.setMedicamentos(medicamentosAtendimento);
-        }
+    public List<Emergencia> listarTodos() {
+        return emergenciaRestRepository.findAll();
     }
 
-    public List<Emergencia> listarTodos() throws IOException {
-        return emergenciaRestRepository.listAll();
-    }
-
-    public Optional<Emergencia> pacientePorId(String idPaciente) throws IOException {
+    public Optional<Emergencia> pacientePorId(Long idPaciente) {
         return emergenciaRestRepository.findById(idPaciente);
     }
 }

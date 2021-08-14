@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -16,12 +15,12 @@ public class MedicamentoRestController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Medicamento adicionarMedicamento(@RequestBody Medicamento medicamento) throws IOException {
-        return medicamentoRestService.adicionarMedicamento(medicamento);
+    public MedicamentoDTOResponse adicionarMedicamento(@RequestBody MedicamentoDTORequest medicamentoDTORequest) {
+        return medicamentoRestService.adicionarMedicamento(medicamentoDTORequest);
     }
 
     @GetMapping
-    public List<Medicamento> listarMedicamentos() throws IOException {
+    public List<MedicamentoDTOResponse> listarMedicamentos() {
         return medicamentoRestService.listarMedicamentos();
     }
 

@@ -2,21 +2,36 @@ package br.com.thiago.sistemaemergenciabackendspringboot.Medicamento;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
+import javax.persistence.Embeddable;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 
 @Builder
-@Data
+@Getter
+@Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Embeddable
+@Entity
+@Table(name = "medicamento")
 public class Medicamento {
 
-    private String id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String principioAtivo;
     private String fabricante;
-    private int dosagem;
+    private Long dosagem;
     private LocalDateTime horarioDosagem;
-    private int periodicidade;
+    private Long periodicidade;
 }
