@@ -19,6 +19,7 @@ public class MedicamentoDTOResponse {
     private String fabricante;
     private Long dosagem;
     private Long periodicidade;
+    private Boolean ativo;
 
     public MedicamentoDTOResponse(Medicamento medicamento) {
         this.id = medicamento.getId();
@@ -26,6 +27,7 @@ public class MedicamentoDTOResponse {
         this.fabricante = medicamento.getFabricante();
         this.dosagem = medicamento.getDosagem();
         this.periodicidade = medicamento.getPeriodicidade();
+        this.ativo = medicamento.getAtivo();
     }
 
     public static List<MedicamentoDTOResponse> convert(List<Medicamento> medicamentos) {

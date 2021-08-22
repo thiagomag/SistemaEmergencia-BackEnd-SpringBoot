@@ -24,6 +24,8 @@ public class EmergenciaDTORequest {
         return Emergencia.builder()
                 .medicamentoId(medicamentos)
                 .pacienteId(paciente)
+                .dataAtendimento(LocalDateTime.now())
+                .ativo(true)
                 .build();
     }
 }

@@ -32,6 +32,7 @@ public class Medicamento {
     private String principioAtivo;
     private String fabricante;
     private Long dosagem;
-    private LocalDateTime horarioDosagem;
     private Long periodicidade;
+    private LocalDateTime proximaDose;
+    private Boolean ativo;
 }

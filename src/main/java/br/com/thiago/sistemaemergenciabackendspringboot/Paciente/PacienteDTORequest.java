@@ -20,6 +20,7 @@ public class PacienteDTORequest {
                 .id(this.id)
                 .nome(this.nome)
                 .cpf(this.cpf)
+                .ativo(true)
                 .build();
     }
 }

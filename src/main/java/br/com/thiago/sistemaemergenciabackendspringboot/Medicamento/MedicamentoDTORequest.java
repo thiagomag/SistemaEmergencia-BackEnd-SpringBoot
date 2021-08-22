@@ -22,6 +22,7 @@ public class MedicamentoDTORequest {
                 .fabricante(this.fabricante)
                 .dosagem(this.dosagem)
                 .periodicidade(this.periodicidade)
+                .ativo(true)
                 .build();
     }
 }
